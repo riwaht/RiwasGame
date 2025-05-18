@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace StaticBloom.Player
+namespace RiwasGame.Player
 {
     [RequireComponent(typeof(Animator))]
     public class PlayerAnimationController : MonoBehaviour

@@ -81,9 +81,6 @@ namespace RiwasGame.Player
             // Apply new velocity while keeping Y velocity
             rb.linearVelocity = new Vector3(smoothSpeed, rb.linearVelocity.y, 0f);
 
-            // Ground Check
-            isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundLayer);
-
             // Update coyote timer
             if (isGrounded)
                 coyoteTimer = coyoteTime;

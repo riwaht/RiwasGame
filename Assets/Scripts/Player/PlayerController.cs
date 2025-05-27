@@ -3,6 +3,7 @@ using UnityEngine;
 namespace RiwasGame.Player
 {
     [RequireComponent(typeof(Rigidbody))]
+    [RequireComponent(typeof(PlayerAnimationController))]
     public class PlayerController : MonoBehaviour
     {
         [Header("Movement Settings")]
@@ -11,38 +12,47 @@ namespace RiwasGame.Player
         [SerializeField] private float acceleration = 15f;
         [SerializeField] private float deceleration = 20f;
 
-        private Vector3 currentVelocity = Vector3.zero;
-
         [Header("Ground Settings")]
         [SerializeField] private Transform groundCheck;
         [SerializeField] private float groundCheckRadius = 0.2f;
         [SerializeField] private LayerMask groundLayer;
 
-        private Rigidbody rb;
-        private Vector3 inputDirection;
-        private bool isGrounded;
-
         [Header("Jump Assist")]
         [SerializeField] private float coyoteTime = 0.2f;
         [SerializeField] private float jumpBufferTime = 0.2f;
 
+        private Rigidbody rb;
+        private PlayerAnimationController animationController;
+        private Vector3 inputDirection;
+
         private float coyoteTimer;
         private float jumpBufferTimer;
-        // private PlayerAnimationController playerAnimationController;
+        private bool isGrounded;
+        private bool wasFalling;
 
         private void Awake()
         {
             rb = GetComponent<Rigidbody>();
-            // playerAnimationController = GetComponent<PlayerAnimationController>();
+            animationController = GetComponent<PlayerAnimationController>();
         }
 
         private void Update()
         {
-            // Handle movement Input
+            HandleInput();
+            UpdateAnimationStates();
+        }
+
+        private void FixedUpdate()
+        {
+            ApplyMovement();
+            GroundCheck();
+        }
+
+        private void HandleInput()
+        {
             float horizontal = Input.GetAxisRaw("Horizontal");
             inputDirection = new Vector3(horizontal, 0f, 0f);
 
-            // Flip player model
             if (horizontal != 0)
             {
                 Vector3 scale = transform.localScale;
@@ -50,7 +60,6 @@ namespace RiwasGame.Player
                 transform.localScale = scale;
             }
 
-            // Handle jump input
             if (Input.GetButtonDown("Jump"))
             {
                 jumpBufferTimer = jumpBufferTime;
@@ -58,46 +67,48 @@ namespace RiwasGame.Player
 
             if (Input.GetButtonDown("Jump") && isGrounded)
             {
-                rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, 0f);
+                rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, rb.linearVelocity.z);
             }
-
-            // TODO: Add animation triggers
-            // e.g. playerAnimationController.SetWalking(inputDirection.x != 0);
         }
 
-
-        private void FixedUpdate()
+        private void ApplyMovement()
         {
-            // Ground Check
-            isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundLayer);
-
-            // Target horizontal velocity based on input
             float targetSpeed = inputDirection.x * moveSpeed;
-
-            // Smooth velocity change
-            float smoothSpeed = Mathf.MoveTowards(rb.linearVelocity.x, targetSpeed,
-                (Mathf.Abs(targetSpeed) > 0.1f ? acceleration : deceleration) * Time.fixedDeltaTime);
-
-            // Apply new velocity while keeping Y velocity
-            rb.linearVelocity = new Vector3(smoothSpeed, rb.linearVelocity.y, 0f);
-
-            // Update coyote timer
-            if (isGrounded)
-                coyoteTimer = coyoteTime;
-            else
-                coyoteTimer -= Time.fixedDeltaTime;
-
-            // Update jump buffer timer
-            jumpBufferTimer -= Time.fixedDeltaTime;
-
-            if (jumpBufferTimer > 0 && coyoteTimer > 0)
-            {
-                rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, 0f);
-                jumpBufferTimer = 0; // Reset jump buffer timer after jumping
-            }
-
+            float speedDiff = targetSpeed - rb.linearVelocity.x;
+            float accelRate = Mathf.Abs(targetSpeed) > 0.01f ? acceleration : deceleration;
+            float movement = Mathf.Pow(Mathf.Abs(speedDiff) * accelRate, 0.9f) * Mathf.Sign(speedDiff);
+            rb.AddForce(movement * Vector3.right, ForceMode.Acceleration);
         }
 
+        private void GroundCheck()
+        {
+            isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundLayer);
+        }
+
+        private void UpdateAnimationStates()
+        {
+            animationController.SetJumping(!isGrounded);
+            animationController.SetFalling(!isGrounded && rb.linearVelocity.y < 0);
+            animationController.SetWalking(Mathf.Abs(inputDirection.x) > 0.01f);
+            animationController.SetRunning(Input.GetKey(KeyCode.LeftShift));
+            animationController.SetDucking(Input.GetKey(KeyCode.S));
+            // TODO: Implement sliding logic based on player state and input
+            animationController.SetSliding(Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.LeftShift));
+
+            if (wasFalling && isGrounded)
+                animationController.TriggerLand();
+
+            wasFalling = !isGrounded && rb.linearVelocity.y < 0;
+
+            // TODO: Implement pushing/pulling logic based on player state and input
+            if (Input.GetKeyDown(KeyCode.E)) animationController.TriggerStartPush();
+            if (Input.GetKeyUp(KeyCode.E)) animationController.TriggerStopPush();
+
+            // TODO: Implement hanging/shimmying/climbing logic based on player state and input
+            // TODO: Add checks for ledges, ladders, etc.
+            // TODO: Implement ledge climbing, ladder climbing, etc.
+            // TODO: Create keybindings map of all actions with appropriate input and state checks
+        }
 
         private void OnDrawGizmosSelected()
         {

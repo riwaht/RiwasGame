@@ -20,6 +20,8 @@ namespace RiwasGame.Utils
             {
                 player = GameObject.FindObjectOfType<PlayerController>()?.transform;
             }
+
+            previousPlayerX = player != null ? player.position.x : 0f;
         }
 
         private void LateUpdate()

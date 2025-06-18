@@ -92,7 +92,6 @@ namespace RiwasGame.Player
             animationController.SetWalking(Mathf.Abs(inputDirection.x) > 0.01f);
             animationController.SetRunning(Input.GetKey(KeyCode.LeftShift));
             animationController.SetDucking(Input.GetKey(KeyCode.S));
-            // TODO: Implement sliding logic based on player state and input
             animationController.SetSliding(Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.LeftShift));
 
             if (wasFalling && isGrounded)
@@ -100,14 +99,34 @@ namespace RiwasGame.Player
 
             wasFalling = !isGrounded && rb.linearVelocity.y < 0;
 
-            // TODO: Implement pushing/pulling logic based on player state and input
+            // Pushing
             if (Input.GetKeyDown(KeyCode.E)) animationController.TriggerStartPush();
             if (Input.GetKeyUp(KeyCode.E)) animationController.TriggerStopPush();
 
-            // TODO: Implement hanging/shimmying/climbing logic based on player state and input
-            // TODO: Add checks for ledges, ladders, etc.
-            // TODO: Implement ledge climbing, ladder climbing, etc.
-            // TODO: Create keybindings map of all actions with appropriate input and state checks
+            // Pulling
+            if (Input.GetKeyDown(KeyCode.Q)) animationController.TriggerStartPull();
+            if (Input.GetKeyUp(KeyCode.Q)) animationController.TriggerStopPull();
+
+            // Hanging
+            // TODO: Add a check for hanging detection here later
+            if (Input.GetKeyDown(KeyCode.H)) animationController.TriggerStartHanging();
+            animationController.SetHanging(Input.GetKey(KeyCode.H));
+
+            // Shimmying
+            animationController.SetShimmying(Input.GetKey(KeyCode.G));
+
+            // Climbing Ledge
+            // TODO: Add a check for ledge detection here later
+            if (Input.GetKeyDown(KeyCode.Z)) animationController.TriggerStartClimbingLedge();
+            animationController.SetClimbingLedge(Input.GetKey(KeyCode.Z));
+
+            // Climbing Ladder
+            // TODO: Add a check for ladder detection here later
+            if (Input.GetKeyDown(KeyCode.X)) animationController.TriggerStartClimbingLadder();
+            animationController.SetClimbingLadder(Input.GetKey(KeyCode.X));
+
+            // Death test
+            // if (Input.GetKeyDown(KeyCode.L)) animationController.TriggerDeathFall();
         }
 
         private void OnDrawGizmosSelected()

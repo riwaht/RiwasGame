@@ -44,8 +44,8 @@ namespace RiwasGame.Player
 
         private void FixedUpdate()
         {
-            ApplyMovement();
             GroundCheck();
+            ApplyMovement();
         }
 
         private void HandleInput()
@@ -87,17 +87,24 @@ namespace RiwasGame.Player
 
         private void UpdateAnimationStates()
         {
+            bool fallingNow = !isGrounded && rb.linearVelocity.y < 0;
+            if (fallingNow && !wasFalling)
+            {
+                animationController.SetFalling(true);
+            }
             animationController.SetJumping(!isGrounded);
-            animationController.SetFalling(!isGrounded && rb.linearVelocity.y < 0);
             animationController.SetWalking(Mathf.Abs(inputDirection.x) > 0.01f);
             animationController.SetRunning(Input.GetKey(KeyCode.LeftShift));
             animationController.SetDucking(Input.GetKey(KeyCode.S));
             animationController.SetSliding(Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.LeftShift));
 
             if (wasFalling && isGrounded)
-                animationController.SetLanding(true);
+            {
+                animationController.SetLanding();
+                animationController.SetFalling(false);
+            }
 
-            wasFalling = !isGrounded && rb.linearVelocity.y < 0;
+            wasFalling = fallingNow;
 
             // Pushing
             if (Input.GetKeyDown(KeyCode.E)) animationController.SetPushing(true);

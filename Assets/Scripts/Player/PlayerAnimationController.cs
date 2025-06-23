@@ -44,7 +44,8 @@ namespace RiwasGame.Player
         public void SetRunning(bool value) => SetBool("isRunning", value);
         public void SetJumping(bool value) => SetBool("isJumping", value);
         public void SetFalling(bool value) => SetBool("isFalling", value);
-        public void SetLanding(bool value) => SetBool("isLanding", value);
+        // landing is a trigger, so it should be set only when landing occurs
+        public void SetLanding() => SetTrigger("Landing");
         public void SetDucking(bool value) => SetBool("isDucking", value);
         public void SetSliding(bool value) => SetBool("isSliding", value);
 

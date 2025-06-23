@@ -95,38 +95,56 @@ namespace RiwasGame.Player
             animationController.SetSliding(Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.LeftShift));
 
             if (wasFalling && isGrounded)
-                animationController.TriggerLand();
+                animationController.SetLanding(true);
 
             wasFalling = !isGrounded && rb.linearVelocity.y < 0;
 
             // Pushing
-            if (Input.GetKeyDown(KeyCode.E)) animationController.TriggerStartPush();
-            if (Input.GetKeyUp(KeyCode.E)) animationController.TriggerStopPush();
+            if (Input.GetKeyDown(KeyCode.E)) animationController.SetPushing(true);
+            if (Input.GetKeyUp(KeyCode.E)) animationController.SetPushing(false);
 
             // Pulling
-            if (Input.GetKeyDown(KeyCode.Q)) animationController.TriggerStartPull();
-            if (Input.GetKeyUp(KeyCode.Q)) animationController.TriggerStopPull();
+            if (Input.GetKeyDown(KeyCode.Q)) animationController.SetPulling(true);
+            if (Input.GetKeyUp(KeyCode.Q)) animationController.SetPulling(false);
 
             // Hanging
             // TODO: Add a check for hanging detection here later
-            if (Input.GetKeyDown(KeyCode.H)) animationController.TriggerStartHanging();
-            animationController.SetHanging(Input.GetKey(KeyCode.H));
+            if (Input.GetKeyDown(KeyCode.H)) animationController.SetHanging(true);
 
             // Shimmying
             animationController.SetShimmying(Input.GetKey(KeyCode.G));
 
             // Climbing Ledge
             // TODO: Add a check for ledge detection here later
-            if (Input.GetKeyDown(KeyCode.Z)) animationController.TriggerStartClimbingLedge();
-            animationController.SetClimbingLedge(Input.GetKey(KeyCode.Z));
+            if (Input.GetKeyDown(KeyCode.Z)) animationController.SetClimbingLedge(true);
 
             // Climbing Ladder
             // TODO: Add a check for ladder detection here later
-            if (Input.GetKeyDown(KeyCode.X)) animationController.TriggerStartClimbingLadder();
-            animationController.SetClimbingLadder(Input.GetKey(KeyCode.X));
+            if (Input.GetKeyDown(KeyCode.X)) animationController.SetClimbingLadder(true);
 
             // Death test
-            // if (Input.GetKeyDown(KeyCode.L)) animationController.TriggerDeathFall();
+            // if (Input.GetKeyDown(KeyCode.L)) animationController.SetDeath(true);
+
+            // General updates to enter substates
+            bool shouldEnterLocomotion =
+            Mathf.Abs(inputDirection.x) > 0.01f ||
+            !isGrounded ||
+            Input.GetKey(KeyCode.LeftShift) ||
+            Input.GetKey(KeyCode.S);
+
+            bool shouldEnterInteraction =
+                Input.GetKey(KeyCode.E) || Input.GetKey(KeyCode.Q);
+
+            bool shouldEnterClimbing =
+                Input.GetKey(KeyCode.H) || Input.GetKey(KeyCode.X);
+
+            bool shouldEnterLedge =
+                Input.GetKey(KeyCode.Z);
+
+            animationController.SetBool("shouldEnterLocomotion", shouldEnterLocomotion);
+            animationController.SetBool("shouldEnterInteraction", shouldEnterInteraction);
+            animationController.SetBool("shouldEnterClimbing", shouldEnterClimbing);
+            animationController.SetBool("shouldEnterLedge", shouldEnterLedge);
         }
 
         private void OnDrawGizmosSelected()

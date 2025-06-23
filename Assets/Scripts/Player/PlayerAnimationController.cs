@@ -55,25 +55,6 @@ namespace RiwasGame.Player
         public void SetShimmying(bool value) => SetBool("isShimmying", value);
         public void SetClimbingLedge(bool value) => SetBool("isClimbingLedge", value);
         public void SetClimbingLadder(bool value) => SetBool("isClimbingLadder", value);
-
-        public void TriggerStartWalking() => SetTrigger("StartWalking");
-        public void TriggerStopWalking() => SetTrigger("StopWalking");
-        public void TriggerStartRunning() => SetTrigger("StartRunning");
-        public void TriggerStopRunning() => SetTrigger("StopRunning");
-
-        public void TriggerStartPush() => SetTrigger("StartPush");
-        public void TriggerStopPush() => SetTrigger("StopPush");
-        public void TriggerStartPull() => SetTrigger("StartPull");
-        public void TriggerStopPull() => SetTrigger("StopPull");
-
-        public void TriggerStartHanging() => SetTrigger("StartHanging");
-        public void TriggerStopHanging() => SetTrigger("StopHanging");
-
-        public void TriggerStartClimbingLedge() => SetTrigger("StartClimbingLedge");
-        public void TriggerStopClimbingLedge() => SetTrigger("StopClimbingLedge");
-        public void TriggerStartClimbingLadder() => SetTrigger("StartClimbingLadder");
-        public void TriggerStopClimbingLadder() => SetTrigger("StopClimbingLadder");
-
-        public void TriggerLand() => SetTrigger("Land");
+        // public void SetDeath(bool value) => SetBool("isDead", value);
     }
 }

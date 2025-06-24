@@ -23,6 +23,7 @@ namespace RiwasGame.Player
 
         private Rigidbody rb;
         private PlayerAnimationController animationController;
+        [SerializeField] private Animator animator;
         private Vector3 inputDirection;
 
         private float coyoteTimer;
@@ -95,7 +96,7 @@ namespace RiwasGame.Player
             animationController.SetJumping(!isGrounded);
             animationController.SetWalking(Mathf.Abs(inputDirection.x) > 0.01f);
             animationController.SetRunning(Input.GetKey(KeyCode.LeftShift));
-            animationController.SetDucking(Input.GetKey(KeyCode.S));
+            animationController.SetDucking(Input.GetKey(KeyCode.S) && !animator.GetBool("isHanging"));
             animationController.SetSliding(Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.LeftShift));
 
             if (wasFalling && isGrounded)
@@ -114,16 +115,39 @@ namespace RiwasGame.Player
             if (Input.GetKeyDown(KeyCode.Q)) animationController.SetPulling(true);
             if (Input.GetKeyUp(KeyCode.Q)) animationController.SetPulling(false);
 
-            // Hanging
-            // TODO: Add a check for hanging detection here later
-            if (Input.GetKeyDown(KeyCode.H)) animationController.SetHanging(true);
-
             // Shimmying
             animationController.SetShimmying(Input.GetKey(KeyCode.G));
 
             // Climbing Ledge
             // TODO: Add a check for ledge detection here later
-            if (Input.GetKeyDown(KeyCode.Z)) animationController.SetClimbingLedge(true);
+            // Hanging and dropping or grabbing ledge
+            if (Input.GetKeyDown(KeyCode.Z))
+            {
+                if (animator.GetBool("isHanging"))
+                {
+                    // Drop from ledge
+                    animationController.SetHanging(false);
+                    animationController.SetFalling(true);
+                }
+                else
+                {
+                    // Grab ledge (simulate climbing toward it)
+                    animationController.SetClimbingLedge(true);
+                    animationController.SetHanging(true);
+                }
+            }
+
+
+            // Hang after climbing ledge
+            if (animator.GetBool("isHanging"))
+            {
+                animationController.SetHanging(true);
+            }
+
+            bool isHanging = animator.GetBool("isHanging");
+            bool isPressingShimmy = Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D);
+
+            animationController.SetShimmying(isHanging && isPressingShimmy);
 
             // Climbing Ladder
             // TODO: Add a check for ladder detection here later
@@ -143,10 +167,10 @@ namespace RiwasGame.Player
                 Input.GetKey(KeyCode.E) || Input.GetKey(KeyCode.Q);
 
             bool shouldEnterClimbing =
-                Input.GetKey(KeyCode.H) || Input.GetKey(KeyCode.X);
+                Input.GetKey(KeyCode.Z) || Input.GetKey(KeyCode.X);
 
             bool shouldEnterLedge =
-                Input.GetKey(KeyCode.Z);
+                animator.GetBool("isHanging");
 
             animationController.SetBool("shouldEnterLocomotion", shouldEnterLocomotion);
             animationController.SetBool("shouldEnterInteraction", shouldEnterInteraction);

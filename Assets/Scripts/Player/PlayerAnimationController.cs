@@ -19,7 +19,8 @@ namespace RiwasGame.Player
             if (!Mathf.Approximately(current, value))
             {
                 animator.SetFloat(param, value);
-                Debug.Log($"[Anim] {param} set to: {value}");
+                // Uncomment for debugging
+                // Debug.Log($"[Anim] {param} set to: {value}");
             }
         }
 
@@ -28,8 +29,9 @@ namespace RiwasGame.Player
             if (animator.GetBool(param) != value)
             {
                 animator.SetBool(param, value);
-                if (value)
-                    Debug.Log($"[Anim] {param} set to true");
+                // Uncomment for debugging
+                // if (value)
+                //     Debug.Log($"[Anim] {param} set to true");
             }
         }
 

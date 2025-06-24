@@ -95,7 +95,7 @@ namespace RiwasGame.Player
             }
             animationController.SetJumping(!isGrounded);
             animationController.SetWalking(Mathf.Abs(inputDirection.x) > 0.01f);
-            animationController.SetRunning(Input.GetKey(KeyCode.LeftShift));
+            animationController.SetRunning(Input.GetKey(KeyCode.LeftShift) && Mathf.Abs(inputDirection.x) > 0.01f);
             animationController.SetDucking(Input.GetKey(KeyCode.S) && !animator.GetBool("isHanging"));
             animationController.SetSliding(Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.LeftShift));
 

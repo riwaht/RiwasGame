@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseMenuUI: {fileID: 0}
---- !u!1 &2359527778433283103
+--- !u!1 &3987027533168764392
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -53,88 +53,48 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1097151790650823690}
-  - component: {fileID: 5753009764417273935}
+  - component: {fileID: 4355381414669816964}
+  - component: {fileID: 4520727383640938643}
   m_Layer: 0
-  m_Name: FadeManager
+  m_Name: BackgroundManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1097151790650823690
+--- !u!4 &4355381414669816964
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2359527778433283103}
+  m_GameObject: {fileID: 3987027533168764392}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -385.62915, y: -167.61147, z: 0.40677893}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 224676525567110266}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5753009764417273935
+--- !u!114 &4520727383640938643
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2359527778433283103}
+  m_GameObject: {fileID: 3987027533168764392}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e7b0fe7154a4a745a4a811321a45165, type: 3}
+  m_Script: {fileID: 11500000, guid: 410d7bf3ed029734791f2cec75e45bb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fadeImage: {fileID: 0}
-  fadeDuration: 1
---- !u!1 &2623326344642588843
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3397975253336266159}
-  - component: {fileID: 4700270605087431314}
-  m_Layer: 0
-  m_Name: SceneController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3397975253336266159
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2623326344642588843}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 224676525567110266}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4700270605087431314
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2623326344642588843}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18462bbbb9f325b4aae72f1fb3c0ef12, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  loadDistance: 20
+  unloadDistance: 30
+  preloadDistance: 30
+  coreSegmentsList: []
+  memorySegmentsList: []
 --- !u!1 &4320882241917198653
 GameObject:
   m_ObjectHideFlags: 0
@@ -211,10 +171,9 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3150273297237710318}
-  - {fileID: 1097151790650823690}
-  - {fileID: 3397975253336266159}
   - {fileID: 2113090049639926726}
   - {fileID: 6540812795715685494}
+  - {fileID: 4355381414669816964}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5909544094678384259
@@ -226,7 +185,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6540812795715685494}
-  - component: {fileID: 4569931871912535527}
+  - component: {fileID: 5847699545694817408}
   m_Layer: 0
   m_Name: MemoryManager
   m_TagString: Untagged
@@ -249,7 +208,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 224676525567110266}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4569931871912535527
+--- !u!114 &5847699545694817408
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

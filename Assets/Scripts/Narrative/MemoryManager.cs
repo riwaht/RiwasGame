@@ -7,7 +7,8 @@ namespace RiwasGame.Utils
     {
         public static MemoryManager Instance { get; private set; }
 
-        private HashSet<string> visitedMemories = new HashSet<string>();
+        private HashSet<string> visitedMemories = new();
+        private Dictionary<string, bool> memoryFlags = new();
 
         private void Awake()
         {
@@ -21,6 +22,8 @@ namespace RiwasGame.Utils
             DontDestroyOnLoad(gameObject);
         }
 
+        // === Visited Memories ===
+
         public void MarkMemoryVisited(string memoryId)
         {
             visitedMemories.Add(memoryId);
@@ -29,6 +32,23 @@ namespace RiwasGame.Utils
         public bool HasVisited(string memoryId)
         {
             return visitedMemories.Contains(memoryId);
+        }
+
+        // === Flags (Decisions, Unlocks, State) ===
+
+        public void SetFlag(string flagKey, bool value)
+        {
+            memoryFlags[flagKey] = value;
+        }
+
+        public bool GetFlag(string flagKey)
+        {
+            return memoryFlags.TryGetValue(flagKey, out var value) && value;
+        }
+
+        public bool HasFlag(string flagKey)
+        {
+            return memoryFlags.ContainsKey(flagKey);
         }
     }
 }

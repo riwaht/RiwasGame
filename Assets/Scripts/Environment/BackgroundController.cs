@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using RiwasGame.Utils; // make sure this is included to access MemoryManager
 
 public class BackgroundController : MonoBehaviour
 {
@@ -25,10 +26,16 @@ public class BackgroundController : MonoBehaviour
         public Vector3 position;
         public List<string> nextSegments;
 
+        // Optional flag to check before allowing load (for branching memories)
+        public string requiredFlag; // leave empty if always loadable
+
         [HideInInspector] public GameObject instance;
         public bool isLoaded => instance != null;
         public bool isPreloaded;
     }
+
+    private float preloadInterval = 0.5f;
+    private float lastPreloadTime;
 
     void Awake()
     {
@@ -43,28 +50,66 @@ public class BackgroundController : MonoBehaviour
     {
         HandleSegmentUpdates(coreSegments);
         HandleSegmentUpdates(memorySegments);
+
+        if (Time.time - lastPreloadTime > preloadInterval)
+        {
+            lastPreloadTime = Time.time;
+            StaggeredPreload(coreSegments);
+            StaggeredPreload(memorySegments);
+        }
     }
 
     void HandleSegmentUpdates(Dictionary<string, BackgroundSegment> segments)
     {
-        foreach (var pair in segments)
+        foreach (var segment in segments.Values)
         {
-            var segment = pair.Value;
             float distance = Vector3.Distance(player.position, segment.position);
 
             if (!segment.isLoaded && distance <= loadDistance)
             {
-                LoadSegment(segment);
+                TryLoadSegment(segment);
             }
             else if (segment.isLoaded && distance >= unloadDistance)
             {
                 UnloadSegment(segment);
             }
-            else if (!segment.isPreloaded && distance <= preloadDistance)
+        }
+    }
+
+    void StaggeredPreload(Dictionary<string, BackgroundSegment> segments)
+    {
+        List<(float, BackgroundSegment)> preloadCandidates = new();
+
+        foreach (var segment in segments.Values)
+        {
+            if (!segment.isLoaded && !segment.isPreloaded)
             {
-                PreloadSegment(segment);
+                if (!string.IsNullOrEmpty(segment.requiredFlag) &&
+                    !MemoryManager.Instance.GetFlag(segment.requiredFlag))
+                    continue; // skip if flag not set
+
+                float distance = Vector3.Distance(player.position, segment.position);
+                if (distance <= preloadDistance)
+                    preloadCandidates.Add((distance, segment));
             }
         }
+
+        preloadCandidates.Sort((a, b) => a.Item1.CompareTo(b.Item1));
+        int count = Mathf.Min(preloadCandidates.Count, 2);
+
+        for (int i = 0; i < count; i++)
+        {
+            PreloadSegment(preloadCandidates[i].Item2);
+        }
+    }
+
+    void TryLoadSegment(BackgroundSegment segment)
+    {
+        if (!string.IsNullOrEmpty(segment.requiredFlag) &&
+            !MemoryManager.Instance.GetFlag(segment.requiredFlag))
+            return;
+
+        LoadSegment(segment);
     }
 
     void LoadSegment(BackgroundSegment segment)
@@ -84,9 +129,8 @@ public class BackgroundController : MonoBehaviour
 
     void PreloadSegment(BackgroundSegment segment)
     {
-        // Optionally use pooling here
         segment.instance = Instantiate(segment.prefab, segment.position, Quaternion.identity);
-        segment.instance.SetActive(false); // Preload but keep hidden
+        segment.instance.SetActive(false);
         segment.isPreloaded = true;
     }
 
@@ -95,7 +139,7 @@ public class BackgroundController : MonoBehaviour
         var dict = type == SegmentType.Core ? coreSegments : memorySegments;
         if (dict.TryGetValue(segmentId, out var segment) && segment.instance != null)
         {
-            segment.instance.SetActive(true); // Show preloaded content
+            segment.instance.SetActive(true);
         }
     }
 
@@ -106,10 +150,17 @@ public class BackgroundController : MonoBehaviour
 
         foreach (var id in current.nextSegments)
         {
-            if (dict.TryGetValue(id, out var next) && !next.isLoaded)
-            {
+            if (!dict.TryGetValue(id, out var next)) continue;
+
+            // Check required flag
+            if (!string.IsNullOrEmpty(next.requiredFlag) &&
+                !MemoryManager.Instance.GetFlag(next.requiredFlag))
+                continue;
+
+            if (!next.isLoaded)
                 LoadSegment(next);
-            }
         }
+
+        MemoryManager.Instance.MarkMemoryVisited(currentId);
     }
 }

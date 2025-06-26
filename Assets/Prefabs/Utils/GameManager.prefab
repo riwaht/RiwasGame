@@ -182,7 +182,9 @@ MonoBehaviour:
   player: {fileID: 0}
   loadDistance: 20
   unloadDistance: 30
-  segments: []
+  preloadDistance: 30
+  coreSegmentsList: []
+  memorySegmentsList: []
 --- !u!1 &4320882241917198653
 GameObject:
   m_ObjectHideFlags: 0
@@ -275,7 +277,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6540812795715685494}
-  - component: {fileID: 4569931871912535527}
+  - component: {fileID: 5847699545694817408}
   m_Layer: 0
   m_Name: MemoryManager
   m_TagString: Untagged
@@ -298,7 +300,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 224676525567110266}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4569931871912535527
+--- !u!114 &5847699545694817408
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

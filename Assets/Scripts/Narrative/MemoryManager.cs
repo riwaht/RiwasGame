@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace RiwasGame.Utils
+namespace RiwasGame.Narrative
 {
     public class MemoryManager : MonoBehaviour
     {

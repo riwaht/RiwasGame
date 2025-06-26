@@ -1,15 +1,18 @@
 using UnityEngine;
 
-public class SegmentTrigger : MonoBehaviour
+namespace RiwasGame.Environment
 {
-    public string currentSegmentId;
-    public BackgroundController.SegmentType segmentType;
-    public BackgroundController backgroundController;
-
-    private void OnTriggerEnter(Collider other)
+    public class SegmentTrigger : MonoBehaviour
     {
-        if (!other.CompareTag("Player")) return;
+        public string currentSegmentId;
+        public BackgroundController.SegmentType segmentType;
+        public BackgroundController backgroundController;
 
-        backgroundController.LoadNextSegments(currentSegmentId, segmentType);
+        private void OnTriggerEnter(Collider other)
+        {
+            if (!other.CompareTag("Player")) return;
+
+            backgroundController.LoadNextSegments(currentSegmentId, segmentType);
+        }
     }
 }
